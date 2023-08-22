@@ -2,14 +2,15 @@ import React, { useState, Dispatch, SetStateAction, useEffect } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import CustomButton from '../components/customButton'
 import CustomTextInput from '../components/customTextInput'
+import { INote, TPage } from '../../App'
 
-type currentPage = {
-	setCurrentPage?: Dispatch<SetStateAction<string>>
-	edit: any
-	addNote: any
+type AddNote = {
+	setCurrentPage: Dispatch<SetStateAction<TPage>>
+	addNote: (id: number, title: string, description: string) => void
+	edit: Partial<INote>
 }
 
-const AddNote = ({ setCurrentPage, edit, addNote }: currentPage) => {
+const AddNote = ({ setCurrentPage, edit, addNote }: AddNote) => {
 	const [title, setTitle] = useState(edit.title || '')
 	const [desc, setDesc] = useState(edit.desc || '')
 
@@ -39,8 +40,8 @@ const AddNote = ({ setCurrentPage, edit, addNote }: currentPage) => {
 					text="Simpan"
 					width="100%"
 					onPress={() => {
-						setCurrentPage?.('home')
-						addNote(edit.id, title, desc)
+						setCurrentPage('home')
+						addNote(edit.id || 0, title, desc)
 					}}
 				/>
 			</View>
@@ -50,7 +51,7 @@ const AddNote = ({ setCurrentPage, edit, addNote }: currentPage) => {
 					color="#203239"
 					text="Kembali ke Home"
 					width="100%"
-					onPress={() => setCurrentPage?.('home')}
+					onPress={() => setCurrentPage('home')}
 				/>
 			</View>
 		</View>

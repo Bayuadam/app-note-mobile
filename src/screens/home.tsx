@@ -1,20 +1,21 @@
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { FlatList, StyleSheet, View, Text } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import CustomButton from '../components/customButton'
+import { INote, TPage } from '../../App'
 
-type Note = {
-	item?: any
-	setCurrentPage?: any
-	setEdit?: any
-	deleteNote?: any
+interface BaseProps {
+	setCurrentPage?: Dispatch<SetStateAction<TPage>>
+	setEdit: Dispatch<SetStateAction<INote>>
+	deleteNote: (id: number) => void
 }
 
-type NoteList = {
-	noteList?: any
-	setCurrentPage?: any
-	setEdit?: any
-	deleteNote?: any
+type Note = BaseProps & {
+	item: INote
+}
+
+interface Home extends BaseProps  {
+	noteList?: INote[]
 }
 
 const NoteCard = ({ item, setCurrentPage, setEdit, deleteNote }: Note) => (
@@ -29,8 +30,8 @@ const NoteCard = ({ item, setCurrentPage, setEdit, deleteNote }: Note) => (
 				fontSize={12}
 				width={100}
 				onPress={() => {
-					setCurrentPage('add')
-					setEdit?.(item)
+					setCurrentPage?.('add')
+					setEdit(item)
 				}}
 			/>
 			<CustomButton
@@ -47,7 +48,7 @@ const NoteCard = ({ item, setCurrentPage, setEdit, deleteNote }: Note) => (
 	</View>
 )
 
-const Home = ({ noteList, setCurrentPage, setEdit, deleteNote }: NoteList) => (
+const Home = ({ noteList, setCurrentPage, setEdit, deleteNote }: Home) => (
 	<View style={styles.container}>
 		<CustomButton
 			backgroundColor="#DDD"
@@ -55,7 +56,7 @@ const Home = ({ noteList, setCurrentPage, setEdit, deleteNote }: NoteList) => (
 			text="Tambahkan Note"
 			width="100%"
 			onPress={() => {
-				setCurrentPage('add')
+				setCurrentPage?.('add')
 			}}
 		/>
 		<FlatList
@@ -69,7 +70,7 @@ const Home = ({ noteList, setCurrentPage, setEdit, deleteNote }: NoteList) => (
 					deleteNote={deleteNote}
 				/>
 			)}
-			keyExtractor={(item) => item.id}
+			keyExtractor={(item) => item.id.toString()}
 		/>
 	</View>
 )

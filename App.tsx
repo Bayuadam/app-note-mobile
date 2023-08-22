@@ -1,16 +1,26 @@
-import React, { SetStateAction, useState, useEffect } from 'react'
+import React, { SetStateAction, useState, useEffect, Dispatch } from 'react'
 import Home from './src/screens/home'
 import AddNote from './src/screens/addNote'
 import EditNote from './src/screens/editNote'
 
-type currentPageWidget = {
-	currentPage?: string
-	noteList?: object
-	setCurrentPage?: (value: string) => void
-	addNote?: (id, title, description) => void
-	edit: any
-	setEdit: any
-	deleteNote?: (id) => void
+export type TPage = 'home' | 'add' | 'edit'
+
+type TPageWidget = {
+	currentPage: TPage
+	noteList: INote[]
+	// noteList: Array<INote>
+	setCurrentPage: Dispatch<SetStateAction<TPage>>
+	addNote: (id: number, title: string, description: string) => void
+	deleteNote: (id: number) => void
+	edit: Partial<INote>
+	setEdit: Dispatch<SetStateAction<INote>>
+}
+
+interface IPageWidget {}
+export interface INote {
+	id: number
+	title: string
+	desc: string
 }
 
 const CurrentPageWidget = ({
@@ -21,7 +31,7 @@ const CurrentPageWidget = ({
 	edit,
 	setEdit,
 	deleteNote,
-}: currentPageWidget) => {
+}: TPageWidget) => {
 	switch (currentPage) {
 		case 'home':
 			return (
@@ -41,15 +51,14 @@ const CurrentPageWidget = ({
 					setCurrentPage={setCurrentPage}
 				/>
 			)
-		// return <EditNote />
 		default:
 			return <Home setEdit={setEdit} deleteNote={deleteNote} />
 	}
 }
 
 const App = () => {
-	const [currentPage, setCurrentPage] = useState('home')
-	const [edit, setEdit] = useState({})
+	const [currentPage, setCurrentPage] = useState<TPage>('home')
+	const [edit, setEdit] = useState<INote>({} as INote)
 	const [noteList, setNoteList] = useState([
 		{
 			id: 1,
@@ -58,9 +67,9 @@ const App = () => {
 		},
 	])
 
-	const addNote = (id, title, desc) => {
+	const addNote = (id: number, title: string, desc: string) => {
 		if (id) {
-			setEdit({})
+			setEdit({} as INote)
 			setNoteList((data) =>
 				data.map((item) => (item.id === id ? { ...item, title, desc } : item)),
 			)
@@ -79,7 +88,7 @@ const App = () => {
 		}
 	}
 
-	const deleteNote = (id) => {
+	const deleteNote = (id: number) => {
 		const deleteNotes = noteList.filter((note) => {
 			if (note.id !== id) {
 				return note
